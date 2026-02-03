@@ -1,0 +1,22 @@
+SELECT
+    Store,
+    Date,
+    Weekly_Sales,
+    Holiday_Flag,
+    Temperature,
+    Fuel_Price,
+    CPI,
+    Unemployment,
+
+    LAG(Weekly_Sales, 1) OVER (PARTITION BY Store ORDER BY Date) AS lag_1,
+    LAG(Weekly_Sales, 2) OVER (PARTITION BY Store ORDER BY Date) AS lag_2,
+    LAG(Weekly_Sales, 4) OVER (PARTITION BY Store ORDER BY Date) AS lag_4,
+
+    AVG(Weekly_Sales) OVER (
+        PARTITION BY Store
+        ORDER BY Date
+        ROWS BETWEEN 4 PRECEDING AND 1 PRECEDING
+    ) AS rolling_4wk_avg
+
+FROM walmart_sales
+WHERE Weekly_Sales IS NOT NULL;
